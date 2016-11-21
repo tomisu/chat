@@ -11,7 +11,11 @@ def room_list(request):
     room_list = []
 
     for room in rooms:
-        room_list.append(room.name)
+        new_room = {}
+        new_room['id'] = room.pk
+        new_room['name'] = room.name
+
+        room_list.append(new_room)
 
     rooms_json = json.dumps(room_list)
     return HttpResponse(rooms_json, content_type='application/json')
@@ -44,7 +48,8 @@ def view_messages(request, room_pk):
 
     try:
         room = Room.objects.get(pk=room_pk)
-        messages = room.messages.all().order_by('-pk')[:10].reverse()
+        messages = room.messages.all().order_by('pk').reverse()[:10]
+        messages = reversed(messages)
         response['messages'] = []
 
         for message in messages:
